@@ -1,74 +1,488 @@
-# 오픈 마켓
+# 🛒 오픈마켓 프로젝트
 
-1. 프로젝트 기간: 2022.01.03 - 2022.01.28
-2. Ground Rules
-    1. 시간
-        - 시작시간 10시
-        - 점심시간 12시~2시
-        - 저녁시간 6시~7시 사이부터 2시간
-    - 진행 계획
-        - 프로젝트가 중심이 아닌 학습과 이유에 초점을 맞추기
-        - 의문점을 그냥 넘어가지 않기
-    - 스크럼
-        - 10시에 스크럼 시작
-3. 커밋 규칙
-    1. 단위
-        - 기능 단위
-    - 메세지
-        - 카르마 스타일
+* 팀 프로젝트(2인)
+* 프로젝트 기간: 2022.01.03 ~ 2022.01.28
 
 # 목차
 
 - [키워드](#키워드)
-- [STEP 1 : 네트워킹 타입 구현](#STEP-1--네트워킹-타입-구현)
+- [프로젝트 소개](#%EF%B8%8F-프로젝트-소개)
+- [프로젝트 주요기능](#-프로젝트-주요기능)
+- [프로젝트 기술 스택](#-프로젝트-기술-스택)
+- [고민한 내용](#-고민한-내용)
+    + [단일 책임 원칙 준수](#단일-책임-원칙-준수)
+    + [의존성 주입 및 Mock타입 설계로 유닛 테스트 진행](#의존성-주입-및-mock타입-설계로-유닛-테스트-진행)
+    + [사용자 경험을 고려한 UI 설계](#사용자-경험을-고려한-ui-설계)
+- [Trouble Shooting](#-trouble-shooting)
+    + ["URLSessionDataTask를 채택한 타입에 init()에 deprecated 경고..?"](#urlsessiondatatask를-채택한-타입에-init에-deprecated-경고)
+    + ["Segument Control을 이용하여 화면전환 시 스크롤 위치가 정상적이지 않은 경우"](#segument-control을-이용하여-화면전환-시-스크롤-위치가-정상적이지-않은-경우)
+    + ["스크롤 하는 현재 위치가 비정상적으로 카운트되는 현상"](#스크롤-하는-현재-위치가-비정상적으로-카운트되는-현상)
+    + ["CollectionView로 Paging시 cell이 밀리는 문제"](#collectionview로-paging시-cell이-밀리는-문제)
+- [새롭게 알게된 것](#-새롭게-알게된-것)
+    + ["키보드를 화면에서 없애는 여러가지 방법"](#키보드를-화면에서-없애는-여러가지-방법)
+    + ["이미지를 리사이즈 하는 방법"](#이미지를-리사이즈-하는-방법)
+    + ["키보드가 콘텐츠를 가리지 않도록 하는 방법"](#키보드가-콘텐츠를-가리지-않도록-하는-방법)
+
+## 키워드
+
+- `의존성 주입(DI)` `URLSession`  `URLProtocol` `URLRequest`
+- `API` `HTTP` `TCP/IP` `MIME-Type` `multipart/form-data`
+- `application/json` `Result` `Codable` `CodingKey` `Async Test`
+
+#
+
+- `UICollectionView` `UICollectionViewFlowLayout`
+- `Supplyment` `UICollectionReusableView` `performBatchUpdates`
+- `reloadData` `Xib File` `UISegmentedControl`
+
+#
+
+- `NSCache` `UIActivityIndicatorView`
+
+#
+
+- `UIRefreshControl` `UIGraphicsImageRenderer` `UIImagePicker`
+- `UIScrollViewDelegate` `UITextField` `UIAlertController`
+
+#
+
+- `UIPageControl` `GestureRecognizer` `UIFontMetrics`
+- `UIScrollView`  `zoomScale` `Dynamic Type` `UICollectionView` `Paging`
+- `UIAlertController` `UITextFlied`
+</br>
+
+## ⭐️ 프로젝트 소개
+
+REST API와의 연동을 통해 간단한 마켓기능을 사용해볼 수 있는 앱이에요. 📱
+
+마켓에 판매할 상품을 등록할 수 있어요 ! 🛒
+
+수정, 삭제 기능을 통해 등록한 상품을 수정해볼 수도 있어요. 🛠
+
+등록되어있는 상품들을 사진을 통해 자세히 볼 수 있습니다. 🔍
+
+</br>
+
+## ✨ 프로젝트 주요기능
+
+> 🔍 앱을 최초에 실행했을 때 데이터가 로드될 때까지 대기 효과를 표시해요.
+
+<img src="https://i.imgur.com/9FDfSdY.gif" width=30%>
+
+#
+
+> 👆🏻 스크롤을 일정 길이 이상 내리게 되면 네트워킹을 통해 다음 리스트를 불러옵니다.
+
+<img src="https://i.imgur.com/Np0uYtH.gif" width=30%>
+
+#
+
+> ♻️ 최상단에서 화면을 아래로 잡아당기면 상품 목록을 갱신할 수 있어요 !
+
+<img src="https://i.imgur.com/oMMViYR.gif" width=30%>
+
+#
+
+> 👀 상단 버튼을 통해 보기모드를 변경할 수 있어요.
+
+<img src="https://i.imgur.com/jB2s2Lz.gif" width=30%>
+
+#
+
+> ✨ 기기 방향에 따라 각 행당 보여주는 상품의 개수가 달라집니다.
+
+![](https://i.imgur.com/6dgNUFt.png)
+
+#
+
+> ➕ 우측 `+` 버튼을 통해 상품을 등록할 수 있어요.
+
+<img src="https://i.imgur.com/3vbG0Ww.gif" width=30%>
+
+#
+
+> 📸 사진첩에서 등록할 사진을 선택할 수 있고, 기존에 등록한 사진을 스크롤링을 통해 확인할 수 있어요.
+
+<img src="https://i.imgur.com/kOrOO6k.gif" width=30%>
+
+#
+
+> 🗑 등록한 이미지의 우측 상단에 위치한 `x`버튼을 통해 이미지를 삭제할 수 있어요.
+
+<img src="https://i.imgur.com/f7mp0cW.gif" width=30%>
+
+#
+
+> 👍🏻 키보드 프레임을 고려하여 입력할 TextView가 키보드에 가리지 않게 제약을 조정했어요.
+
+<img src="https://i.imgur.com/UFIrVok.gif" width=30%>
+
+#
+
+> ⚠️ 실시간으로 입력값의 유효성을 검증할 수 있어요!
+
+<img src="https://i.imgur.com/i8zAjEx.gif" width=30%>
+
+#
+
+> ✔️ 상품을 등록하고나면 자동으로 이전 페이지로 이동하며, 네트워킹을 통해 새 데이터를 갱신해요.
+
+<img src="https://i.imgur.com/QQhjsLR.gif" width=30%>
+
+#
+
+> 🛠 상품 상세 조회 화면 우측 상단의 더보기 버튼을 통해 상품을 수정할 수 있어요.
+
+<img src="https://i.imgur.com/xVVshOm.gif" width=30%>
+
+#
+
+> 🌟 페이징을 통해 여러 이미지를 조회할 수 있어요.
+
+<img src="https://i.imgur.com/CkjCwxI.gif" width=30%>
+
+#
+
+> 🔍 이미지를 클릭하고 2번 탭을 하면 이미지가 2배 크기로 확대/축소가 되요 !
+
+<img src="https://i.imgur.com/Nnfjfbn.gif" width=30%>
+
+#
+
+> 🗑 상품 삭제 후에는 상세화면을 벗어나며 상품 목록을 갱신해요.
+
+<img src="https://i.imgur.com/EiIM2yy.gif" width=30%>
+
+
+</br>
+
+## 💪🏻 프로젝트 기술 스택
+
+|UI|Network|Decoding / Encoding|Caching|Test|
+| --- | --- | -------- | -------- | -------- |
+|UIKit|URLSession</br>Data|Codable</br>JSONEncoder / JSONDecoder</br>Data(multipart/form-data)|NSCache|XCTest|
+
+</br>
+
+## 🤔 고민한 내용
+
+### 단일 책임 원칙 준수
+
+* 가독성 향상 및 구조 파악이 수월하도록 각 역할들을 최대한 잘게 쪼개서 설계를 진행하였습니다.
+
+### 의존성 주입 및 Mock타입 설계로 유닛 테스트 진행
+
+* 테스트 작성을 위해 의존성 주입을 활용하여 Mock, Stub 객체를 만들어 활용하였습니다.
+* URLProtocol을 상속받은 가짜 Session을 만들고 네트워크와 무관한 테스트를 진행하였습니다.
+    * 서버로 보낼 요청(GET, POST, PATCH, DELETE)을 올바르게 만드는지
+    * 실패하는 네트워크, 성공하는 네트워크에 따라 핸들링을 하고 있는지
+
+### 사용자 경험을 고려한 UI 설계
+
+* 서버에 상품 목록을 요청했을 때, 이미지는 URL 형태로 받게되는데, 비동기로 작업을 처리하게 되면, 텍스트가 먼저 뜨고 그 다음에 이미지들이 순차적으로 뜨는 현상이 있었습니다.
+    * 따라서 모든 데이터가 다운로드가 완료된 시점에 한번에 데이터를 띄워주는 것이 좀더 좋다고 판단되어 대기 표시를 띄운 후 데이터 다운로드를 완료하면 한번에 상품 목록을 띄우도록 구성하였습니다.
+* 상품 목록의 다음페이지를 넘어가는 방법을 `Pagination`으로 구현하였습니다.
+    * 스크롤이 하단에 가까워지면 다음페이지를 로드하도록 구성
+* 기존에는 상품 등록 시 입력값 유효성 검사를 `Done` 버튼을 누를 때마다 Alert을 통해 확인할 수 있었으나, 너무 많은 Alert은 귀찮고 번거롭다고 판단되어, 누르기 전에 실시간으로 확인할 수 있도록 기능 추가하여 사용성을 향상시켜주었습니다.
+* 키보드가 콘텐츠를 가리지 않도록 제약조건을 조정하여 구현하였습니다.
+* 이미지 상세보기 기능을 추가하여 상품을 좀더 자세히 볼 수 있도록 구현하였습니다.
+    * 이미지 터치 시 이미지 상세보기 화면으로 이동
+    * 2번 탭을 빠르게 할 때 확대/축소 기능 제공
+
+</br>
+
+## 🛠 Trouble Shooting
+
+### "URLSessionDataTask를 채택한 타입에 init()에 deprecated 경고..?"
+
+- `상황` URLSessionDataTask을 대체할 객체로 `StubURLSessionDataTask` 를 구현하다가 경고를 마주하게 되었다.
+
+```swift
+class StubURLSessionDataTask: URLSessionDataTask {
+    var dummyData: DummyData?
+
+    // init 부분에서 에러가 났다.
+    init(dummy: DummyData?, completionHandler: DataTaskCompletionHandler?) {
+        self.dummyData = dummy
+        self.dummyData?.completionHandler = completionHandler
+    }
+
+    override func resume() {
+        dummyData?.completion()
+    }
+}
+```
+
+> 'init()' was deprecated in iOS 13.0: Please use -[NSURLSession dataTaskWithRequest:] or other NSURLSession methods to create instances
+> 
+- `이유` URLSessionDataTask `init()`이 IOS13 이후에 deprecatede되었기 때문이다. 해당 경고를 없애고 싶어서 구글링을 하다가 `URLProtocol`을 발견하게 되었다.
+- `해결` URLProtocol을 상속받은 MockURLProtocol을 만들어서 URLSession configuration을 구성하는 방법으로 문제를 해결하고 기존에 만들었던 StubURLSessionDataTask, DummyData, MockSession 타입은 더이상 사용하지 않게되어 모두 삭제해주었다.
+    - `URLProtocol`이란?
+        - URL 데이터 로딩을 다루는 추상클래스
+    - URLProtocol은 URLProtocolClient 프로토콜을 통해 네트워크 진행 상황을 전달한다.
+    - 테스트 번들에서 MockURLProtocol 클래스를 만들고 메소드를 재정의 해준다.
+    - 로드를 할 때 설정한 후 전달할 Data, Error, Response를 딕셔너리로 설정해준다.
+        - 이 값은 URLProtocol에 연결하여 설정값을 세팅해주기 위한 값이 된다.
+    - Unit Test를 위해 상속받아서 오버라이드 함으로써 커스텀 하여 Mock 객체를 새롭게 만들 수 있다.
+        - 기존처럼 외부 네트워크에 요청을 직접 보내는 동작이 아니라, 요청을 가로채서 원하는 응답을 반환하게 끔 커스텀 하는 작업이다.
+        - 즉 원래 같이 웹 서버에서 데이터를 불러오는 과정이 아니고, 내가 설정한 값(data, response)을 그대로 반환하게 만들어 주는 과정인 것이다.
+
+#
+
+### "Segument Control을 이용하여 화면전환 시 스크롤 위치가 정상적이지 않은 경우"
+
+<img src="https://i.imgur.com/DRtK0Xs.gif" width=30%>
+
+- `상황`  FlowLayout을 활용하여 화면을 전환할 때, 스크롤이 상단에 위치하는게 아니라 제멋대로인 위치에 가있는 현상이 발생했다.
+- `이유` 레이아웃이 서로 다르기 때문에 스크롤의 좌표도 다른 것으로 추측이 되었다.
+- `해결` 따라서 이 부분을 화면을 전환할 때 스크롤의 위치를 상단에 위치하게 설정해주니 해결되었다.
+    
+    ```swift
+    extension UIScrollView {
+        func scrollToTop() {
+            let topOffset = CGPoint(x: 0, y: -contentInset.top)
+            setContentOffset(topOffset, animated: false)
+        }
+    }
+    ```
+  
+# 
+
+### "스크롤 하는 현재 위치가 비정상적으로 카운트되는 현상"
+
+> 스크롤이 하단에 가까워지면 다음페이지를 로드하도록 로직을 짰으나, 스크롤하는 현재 위치가 비정상적으로 카운트되어 디코딩이 실패하는 경우가 생겼다. 이를 해결하기 위해 `LLDB`를 활용하여 디버깅을 진행하였다.
+
+- 항상 뜨는 에러는 아니고, 간헐적으로 뜨는 에러다. 스크롤을 하단까지 했을 때 디코딩에 실패하는 경우가 있었다. 디버깅을 해보니 결과는 아래와 같다.
+- ![](https://i.imgur.com/jotGTB4.png)
+- ![](https://i.imgur.com/YQuHS96.png)
+- ![](https://i.imgur.com/cm6J1vD.png)
+- 뷰컨트롤러 쪽에서 네트워크 매니저의 `fetch` 메소드를 사용하는 쪽에서 에러가 나는 것 같은데, 네트워크에서는 `success`로 데이터를 가져오긴 했으나 조회를 해보면 데이터가 비어있는 것을 확인할 수 있었다.
+- ![](https://i.imgur.com/rHL8Ebf.png)
+- Response를 확인해보면 `204`코드로 응답하고 있다.
+- ![](https://i.imgur.com/EiaoQJ1.png)
+- 스크롤 하는 부분에 중단점을 찍고 확인해보니 `currentPage`가 `104`가 되어있는 것도 확인되었다. 저 조건문이라면 104가 될 수가 없는데.. 어느순간 스크롤을 계산하는 부분(`yOffset`)에서 에러가 발생해서 비정상적으로 currentPage가 올라가는 것 같다.
+
+```swift
+if heightRemainBottomHeight < frameHeight ,
+   let page = page, page.hasNext, page.pageNumber == currentPage {
+    currentPage += 1
+    self.requestProducts()
+}
+```
+
+- 따라서 위와 같이 조건문을 하나 더 추가해서 안전하게 currentPage를 더해줄 수 있도록 수정해주었다. 이렇게 하니 더이상 해당 버그는 발생하지 않았다.
+
+#
+
+### "CollectionView로 Paging시 cell이 밀리는 문제"
+
+- `문제`  CollectionView의 isPagingEnabled을 true로 주면 아래 예시와 같이 스크롤 했을 때 cell이 조금씩 밀리는 현상이 나타났다.
+    
+    ![Untitled](https://camo.githubusercontent.com/a807e6deef77c57e0664311f0f555c6f68ead4d7c87523ff92dc05c65c30b3dd/68747470733a2f2f692e696d6775722e636f6d2f7459304e4434632e676966)
+    
+- `이유` CollectionView의 경우 minimumLineSpacing이 기본적으로 값(10.0)이 들어가있다. 해당 값 때문에 스크롤 시 밀림현상이 있었던 것이였다.
+- `해결` minimumLineSpacing을 0으로 설정해주니 스크롤 시 cell이 조금씩 밀리던 현상이 해결되었다.
+
+</br>
+
+## 🔥 새롭게 알게된 것
+
+### "키보드를 화면에서 없애는 여러가지 방법"
+
+* 삽질을 좀 해본 결과 여~러 방법이 있었다.
+    * Recognizer를 등록해서 터치시 키보드를 사라지도록 하기.
+    ```swift
+    // Recognizer를 활용해서 뷰컨을 터치하면 키보드 사라지는 코드
+    func hideKeyboard() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    ```
+    * touchesBegan 메소드를 활용하여 View를 터치시 키보드를 사라지게 하기.
+    ```swift
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.endEditing(true)
+    }    
+    ```    
+    * ScrollView에 keyboardDismissMode를 drag로 설정해주기
+        * `scrollView.keyboardDismissMode = .onDrag`
+* 이번 프로젝트에서는 touchesBegan과 ScrollView에 keyboardDismissMode를 활용하여 키보드를 내릴 수 있도록 해주었다.
+* addGestureRecognizer는 실험해보았는데, 이걸 등록했을 때 같은 뷰컨에 있는 collectionView의 delegate 메소드가 호출되지 않는 현상을 발견하게 되었다.
+
+> 해결 방법
+
+```swift
+extension UIViewController {
+    func hideKeyboard() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+        tap.cancelsTouchesInView = false // 이거 추가하니까 해결댐...
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
+```
+**[cancelsTouchesInView]**
+* Bool 타입의 프로퍼티로 default 값은 true이다.
+* Gesture Recognizer가 제스처를 인식하면 나머지 터치정보들을 뷰로 전달하지 않고 이전에 전달된 터치들은 취소된다.
+* 하지만 false로 할당한다면 제스처를 인식한 후에도 터치 정보를 뷰에 전달하게 된다.
+
+> 문제가 해결된 이유
+기존에는 cancelsTouchesInView값이 true여서 나머지 터치정보들을 뷰로 전달하지 않고 취소되었기 때문에 TableView의 Select가 먹지 않았던 것이였다. false로 할당해줌으로써 제스처를 인식한 후에도 Gesture Recognizer의 패턴과는 무관하게 터치 정보를 뷰에 전달하게 되어 이 문제가 해결되었던 것이다.
+
+#
+
+### "이미지를 리사이즈 하는 방법"
+
+* 크기를 줄이고, 화질을 낮춰서 압축을 한다.
+* UIImage를 extension하여 기능을 구현했다.
+* 최대 파일 크기를 지정하고 그 이하가 될 때까지 반복하며 이미지의 크기를 줄인다.
+
+```swift
+extension UIImage {
+    func resized(percentage: CGFloat) -> UIImage { // 사이즈를 퍼센트만큼 리사이즈하는 메소드
+        let size = CGSize(width: size.width * percentage, height: size.height * percentage)
+        return UIGraphicsImageRenderer(size: size, format: imageRendererFormat).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+
+    func compress() -> UIImage { // 호출시 Data의 count를 기준으로 용량에 맞게 화질을 낮춘다.
+        var compressImage = self
+        var quality: CGFloat = 1 // 화질
+        let maxDataSize = 307200 // 최대크기
+        guard var compressedImageData = compressImage.jpegData(compressionQuality: 1) else {
+            return UIImage()
+        }
+        while compressedImageData.count > maxDataSize {
+            quality *= 0.8 // 20퍼센트 씩 감소
+            compressImage = compressImage.resized(percentage: quality)
+            compressedImageData = compressImage.jpegData(compressionQuality: quality) ?? Data()
+        }
+        return compressImage
+    }
+}
+```
+
+#
+
+### "키보드가 콘텐츠를 가리지 않도록 하는 방법"
+
+* `1` ScrollView를 활용하기
+    * 키보드의 위치만큼 스크롤의 위치를 바꿔주는 방식
+* `2` NotificationCenter 활용
+    * 키보드가 나타나고 사라질 때마다 Notification의 알림을 받기
+    * iOS 9 이상 버전을 타겟으로 앱을 만든다면 자동으로 removeObserver를 해준다. 따라서 신경쓰지 않아도 된다!
+        * https://useyourloaf.com/blog/unregistering-nsnotificationcenter-observers-in-ios-9/
+```swift
+private func setUpNotification() {
+    NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(keyboardWillShow(_:)),
+        name: UIResponder.keyboardWillShowNotification, // show
+        object: nil
+    )
+    NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(keyboardWillHide(_:)),
+        name: UIResponder.keyboardWillHideNotification, // hide
+        object: nil
+    )
+}
+
+```
+* 알림을 받았을 때 호출할 메소드 구현하기
+```swift
+@objc private func keyboardWillShow(_ notification: Notification) {
+    guard let userInfo = notification.userInfo as NSDictionary?,
+          var keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+          let scrollView = self.superview?.superview as? UIScrollView,
+          let view = self.superview?.superview?.superview else {
+              return
+          }
+    var contentInset = scrollView.contentInset
+    contentInset.bottom = keyboardFrame.size.height
+    scrollView.contentInset = contentInset
+    scrollView.scrollIndicatorInsets = scrollView.contentInset
+}
+
+@objc private func keyboardWillHide(_ notification: NSNotification) {
+    guard let scrollView = self.superview?.superview as? UIScrollView else {
+        return
+    }
+    scrollView.contentInset = UIEdgeInsets.zero
+    scrollView.scrollIndicatorInsets = scrollView.contentInset
+}
+```
+* Noti로 받은 keyboardFrame을 바인딩 한다.
+* 콘텐츠의 상하좌우로 안쪽 여백을 주는 contentInset의 bottom을 keyboardFrame.size의 높이로 대입해준다.
+    * ScrollView의 서브뷰 크기를 변경하지 않고 스크롤 뷰 크기를 확장한다는 의미
+    * ![](https://soulpark.files.wordpress.com/2012/12/ec8aa4ed81aceba6b0ec83b7-2012-12-30-ec98a4ed9b84-5-12-32.png)
+    * 키보드로 인해 가려지는 부분을 스크롤뷰 아래쪽으로` keyboardFrame 사이즈의 높이만큼 버퍼를 추가`하여 스크롤뷰를 확장함으로써 키보드 가림현상을 해결하는 것이다.
+* contentInset을 변경하면 `scrollIndicatorInsets`에도 영향을 미친다.
+    * 스크롤 시 보이는 스크롤 표시를 말한다.
+* `scrollIndicatorInsets`가 `contentInset으로` 추가한 버퍼공간에도 표시가 된다.
+    * 이를 방지하기 위해서는 `scrollIndicatorInsets` 속성도 같이 변경해주어야 한다.
+* ![](https://i.imgur.com/xywzYXO.gif)
+* 이렇게 스크롤뷰를 활용하면 키보드가 화면가리는 현상을 손쉽게 해결할 수 있다.
+
+
+> ### 그럼.. UITextView는...어떻게?
+
+* 텍스트 필드는 위 방법으로 해결이 되었지만 UITextView는 어떻게 스크롤이 따라오게 만들까?
+    * 이 부분은 텍스트뷰의 스크롤 기능을 false로 제거한다.
+        * `TextView.isScrollEnabled = false`
+    * 그리고 오토레이아웃으로 TextView의 높이가 늘 고정되어있는 것이 아니라 늘어날 수도 있도록 `priority`를 조절해주면 된다.
+* 위와 같이 세팅한다면, 텍스트뷰가 안에 Text가 길어질 수록 높이가 늘어나고, 그에 따라 스크롤도 자동으로 내려온다.
+    * 해결해보면서 메모장도 이런 방식인건가? 했다...!
+* ![](https://i.imgur.com/P3z2Ydx.gif)
+
+</br>
+
+[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#-오픈마켓-프로젝트)
+
+<details>
+<summary>[학습 기록 흔적]</summary>
+<div markdown="1">
+
+
+# 목차
+
+- [STEP 1 : 네트워킹 타입 구현](#step-1--네트워킹-타입-구현)
     + [고민했던 것](#1-1-고민했던-것)
     + [의문점](#1-2-의문점)
-    + [Trouble Shooting](#1-3-Trouble-Shooting)
+    + [Trouble Shooting](#1-3-trouble-shooting)
     + [배운 개념](#1-4-배운-개념)
-    + [PR 후 개선사항](#1-5-PR-후-개선사항)
-- [STEP 2 : 상품 목록 화면 구현](#STEP-2--상품-목록-화면-구현)
+    + [PR 후 개선사항](#1-5-pr-후-개선사항)
+- [STEP 2 : 상품 목록 화면 구현](#step-2--상품-목록-화면-구현)
     + [고민했던 것](#2-1-고민했던-것)
     + [의문점](#2-2-의문점)
-    + [Trouble Shooting](#2-3-Trouble-Shooting)
+    + [Trouble Shooting](#2-3-trouble-shooting)
     + [배운 개념](#2-4-배운-개념)
-- [STEP Bouns : 로컬 캐시 구현](#STEP-Bonus--로컬-캐시-구현)
+- [STEP Bouns : 로컬 캐시 구현](#step-bonus--로컬-캐시-구현)
     + [고민했던 것](#3-1-고민했던-것)
     + [의문점](#3-2-의문점)
-    + [Trouble Shooting](#3-3-Trouble-Shooting)
+    + [Trouble Shooting](#3-3-trouble-shooting)
     + [배운 개념](#3-4-배운-개념)
-    + [PR 후 개선사항](#3-5-PR-후-개선사항)
-- [STEP 3 : 상품 등록/수정 화면 구현](#STEP-3--상품-등록수정-화면-구현)
+    + [PR 후 개선사항](#3-5-pr-후-개선사항)
+- [STEP 3 : 상품 등록/수정 화면 구현](#step-3--상품-등록수정-화면-구현)
     + [고민했던 것](#4-1-고민했던-것)
     + [의문점](#4-2-의문점)
-    + [Trouble Shooting](#4-3-Trouble-Shooting)
+    + [Trouble Shooting](#4-3-trouble-shooting)
     + [배운 개념](#4-4-배운-개념)
-    + [PR 후 개선사항](#4-5-PR-후-개선사항)
-- [STEP 4 : 상품 상세화면 구현](#STEP-4--상품-상세화면-구현)
+    + [PR 후 개선사항](#4-5-pr-후-개선사항)
+- [STEP 4 : 상품 상세화면 구현](#step-4--상품-상세화면-구현)
     + [고민했던 것](#5-1-고민했던-것)
     + [의문점](#5-2-의문점)
-    + [Trouble Shooting](#5-3-Trouble-Shooting)
+    + [Trouble Shooting](#5-3-trouble-shooting)
     + [배운 개념](#5-4-배운-개념)
-    + [PR 후 개선사항](#5-5-PR-후-개선사항)
-
-# 키워드
-
-- STEP1
-    - `의존성 주입(DI)` `URLSession`  `URLProtocol` `URLRequest`
-    - `API` `HTTP` `TCP/IP` `MIME-Type` `multipart/form-data`
-    - `application/json` `Result` `Codable` `CodingKey` `Async Test`
-- STEP2
-    - `UICollectionView` `UICollectionViewFlowLayout`
-    - `Supplyment` `UICollectionReusableView` `performBatchUpdates`
-    - `reloadData` `Xib File` `UISegmentedControl`
-- STEP Bonus
-    - `NSCache` `UIActivityIndicatorView`
-- STEP3
-    - `UIRefreshControl` `UIGraphicsImageRenderer` `UIImagePicker`
-    - `UIScrollViewDelegate` `UITextField` `UIAlertController`
-- STEP4
-    - `UIPageControl` `GestureRecognizer` `UIFontMetrics`
-    - `UIScrollView`  `zoomScale` `Dynamic Type` `UICollectionView` `Paging`
-    - `UIAlertController` `UITextFlied`
 
 # STEP 1 : 네트워킹 타입 구현
 
@@ -249,7 +663,7 @@ class StubURLSessionDataTask: URLSessionDataTask {
 - 접근제어가 붙어있지 않은 프로퍼티에 접근제어를 추가
 - Address의 네이밍을 명확하게 개선 (APIAddress)
 
-[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#오픈-마켓)
+[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#목차-1)
 
 
 # STEP 2 : 상품 목록 화면 구현
@@ -343,7 +757,7 @@ class StubURLSessionDataTask: URLSessionDataTask {
     - 가로모드, 세로모드에서도 레이아웃이 뭉개지지 않도록 개선
 
 
-[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#오픈-마켓)
+[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#목차-1)
 
 
 
@@ -414,7 +828,7 @@ if heightRemainBottomHeight < frameHeight ,
 - API 문서를 다시 검토하여 타입을 개선
 - 중복되는 코드를 제거하여 리팩토링
 
-[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#오픈-마켓)
+[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#목차-1)
 
 
 # STEP 3 : 상품 등록/수정 화면 구현
@@ -546,7 +960,7 @@ if heightRemainBottomHeight < frameHeight ,
 - 이미지 삭제시 'x'버튼을 클릭했을 때 삭제되도록 수정하여 개선
 - 셀을 선택했을 때 변화가 발생하도록 `selectedBackgroundView` 설정
 
-[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#오픈-마켓)
+[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#목차-1)
 
 # STEP 4 : 상품 상세화면 구현
 
@@ -671,4 +1085,8 @@ if heightRemainBottomHeight < frameHeight ,
 - UIAlertController의 텍스트 필드를 추가하여 활용하는 방법
     - Handler 활용
 
-[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#오픈-마켓)
+[![top](https://img.shields.io/badge/top-%23000000.svg?&amp;style=for-the-badge&amp;logo=Acclaim&amp;logoColor=white&amp;)](#목차-1)
+
+
+</div>
+</details>
